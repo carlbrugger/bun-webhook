@@ -1,3 +1,5 @@
+import { validateEmail, validateNonEmpty } from "./validators";
+
 interface PartialRejection {
   sheets: Sheet[];
 }
@@ -12,21 +14,6 @@ interface RecordError {
   id: string;
   values: { field: string; message: string }[];
 }
-
-const validateEmail = (field: string, value: string) => {
-  const validEmailAddress = /^[^\s@]+@flatfile.io$/i;
-  if (field === "email" && value && !validEmailAddress.test(value)) {
-    return "Not a valid Flatfile email address";
-  }
-  return null;
-};
-
-const validateNonEmpty = (field: string, value: string) => {
-  if (!value) {
-    return "Cannot be empty";
-  }
-  return null;
-};
 
 const getRejections = (body: any, validator: any) => {
   const rejections: PartialRejection = { sheets: [] };
@@ -69,7 +56,6 @@ const server = Bun.serve({
     const url = new URL(req.url);
     if (url.pathname === "/reject-non-flatfile-emails") {
       const rejections = getRejections(body, validateEmail);
-      console.log(rejections);
       responseBody = JSON.stringify(
         {
           rejections,
@@ -80,7 +66,6 @@ const server = Bun.serve({
     }
     if (url.pathname === "/reject-empty-cells") {
       const rejections = getRejections(body, validateNonEmpty);
-      console.log(rejections);
       responseBody = JSON.stringify(
         {
           rejections,

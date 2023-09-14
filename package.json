@@ -1,10 +1,10 @@
 {
   "name": "webhook",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "start:watch": "bun run --watch index.ts",
-    "start": "bun run index.ts"
+    "start:watch": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts"
   },
   "devDependencies": {
     "bun-types": "latest"
