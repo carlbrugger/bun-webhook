@@ -1,6 +1,7 @@
 import { validateEmail, validateNonEmpty } from "./validators";
 
 interface PartialRejection {
+  id: string;
   sheets: Sheet[];
 }
 
@@ -16,8 +17,9 @@ interface RecordError {
 }
 
 const getRejections = (body: any, validator: any) => {
-  const rejections: PartialRejection = { sheets: [] };
-  body.workbook.sheets.forEach((sheet: any) => {
+  const workbook = body.workbook;
+  const rejections: PartialRejection = { id: workbook.id, sheets: [] };
+  workbook.sheets.forEach((sheet: any) => {
     const rejectedRecords: RecordError[] = [];
     sheet.records.forEach((record: any) => {
       for (const [field, cell] of Object.entries(record.values)) {
