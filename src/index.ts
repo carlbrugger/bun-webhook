@@ -2,12 +2,13 @@ import { validateEmail, validateNonEmpty } from "./validators";
 
 interface PartialRejection {
   id: string;
+  deleteSubmitted?: boolean;
+  message?: string;
   sheets: Sheet[];
 }
 
 interface Sheet {
-  id: string;
-  name: string;
+  sheetId: string;
   rejectedRecords: RecordError[];
 }
 
@@ -18,7 +19,12 @@ interface RecordError {
 
 const getRejections = (body: any, validator: any) => {
   const workbook = body.workbook;
-  const rejections: PartialRejection = { id: workbook.id, sheets: [] };
+  const rejections: PartialRejection = {
+    id: workbook.id,
+    message: "Success! All records are valid.",
+    deleteSubmitted: true,
+    sheets: [],
+  };
   workbook.sheets.forEach((sheet: any) => {
     const rejectedRecords: RecordError[] = [];
     sheet.records.forEach((record: any) => {
@@ -38,11 +44,14 @@ const getRejections = (body: any, validator: any) => {
       }
     });
     rejections.sheets.push({
-      id: sheet.id,
-      name: sheet.name,
+      sheetId: sheet.id,
       rejectedRecords,
     });
   });
+
+  if (rejections.sheets.some((sheet) => sheet.rejectedRecords.length > 0)) {
+    rejections.message = "Some records are invalid.";
+  }
   return rejections;
 };
 
