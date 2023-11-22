@@ -21,8 +21,8 @@ const getRejections = (body: any, validator: any) => {
   const workbook = body.workbook;
   const rejections: PartialRejection = {
     id: workbook.id,
-    message: "Success! All records are valid.",
-    deleteSubmitted: true,
+    // message: "Success! All records are valid.",
+    // deleteSubmitted: true,
     sheets: [],
   };
   workbook.sheets.forEach((sheet: any) => {
@@ -49,14 +49,14 @@ const getRejections = (body: any, validator: any) => {
     });
   });
 
-  if (rejections.sheets.some((sheet) => sheet.rejectedRecords.length > 0)) {
-    rejections.message = "Some records are invalid.";
-  }
+  // if (rejections.sheets.some((sheet) => sheet.rejectedRecords.length > 0)) {
+  //   rejections.message = "Some records are invalid.";
+  // }
   return rejections;
 };
 
 const server = Bun.serve({
-  port: 1234,
+  port: 5678,
   async fetch(req: Request) {
     const body = await req.json();
     console.log("------------------- Request ------------------");
