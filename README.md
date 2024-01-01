@@ -1,6 +1,6 @@
-# bun-webhook
+# demo-partial-rejections
 
-This project is a webhook receiver for testing the `@flatfile/plugin-partial-rejection-handler`. There are two endpoints that will provide validation of records. The `http://localhost:1234/reject-non-flatfile-emails` endpoint checks for that do not end in `@flatfile.io`. The `http://localhost:1234/reject-empty-cells` endpoint checks for empty cells. Both endpoints will return the offending record ids along with an error message.
+This project is a demo Bun HTTP server to demo the Flatfile `@flatfile/plugin-partial-rejection-handler` package functionality. There are two endpoints that will provide validation of records. The `http://localhost:1234/reject-non-flatfile-emails` endpoint checks for that do not end in `@flatfile.io`. The `http://localhost:1234/reject-empty-cells` endpoint checks for empty cells. Both endpoints will return the offending record ids along with an error message.
 
 ## Usage
 

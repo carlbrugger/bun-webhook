@@ -1,5 +1,5 @@
 {
-  "name": "webhook",
+  "name": "demo-partial-rejections",
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
