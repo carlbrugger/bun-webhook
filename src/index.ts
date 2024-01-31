@@ -58,35 +58,50 @@ const getRejections = (body: any, validator: any) => {
 const server = Bun.serve({
   port: 5678,
   async fetch(req: Request) {
-    const body = await req.json();
-    console.log("------------------- Request ------------------");
-    console.log("Headers:", JSON.stringify(req.headers, null, 2));
-    console.log("Body:", JSON.stringify(body, null, 2));
+    const headers = new Headers({
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    });
 
-    let responseBody = "Success!";
-    const url = new URL(req.url);
-    if (url.pathname === "/reject-non-flatfile-emails") {
-      const rejections = getRejections(body, validateEmail);
-      responseBody = JSON.stringify(
-        {
-          rejections,
-        },
-        null,
-        2
-      );
-    }
-    if (url.pathname === "/reject-empty-cells") {
-      const rejections = getRejections(body, validateNonEmpty);
-      responseBody = JSON.stringify(
-        {
-          rejections,
-        },
-        null,
-        2
-      );
+    if (req.method.toUpperCase() === "OPTIONS") {
+      // Preflight request
+      return new Response(null, { headers, status: 200 });
     }
 
-    return new Response(responseBody);
+    try {
+      const body = await req.json();
+      const url = new URL(req.url);
+
+      if (url.pathname === "/reject-non-flatfile-emails") {
+        const rejections = getRejections(body, validateEmail);
+        const responseBody = JSON.stringify(
+          {
+            rejections,
+          },
+          null,
+          2
+        );
+        return new Response(responseBody, { headers, status: 200 });
+      }
+
+      if (url.pathname === "/reject-empty-cells") {
+        const rejections = getRejections(body, validateNonEmpty);
+        const responseBody = JSON.stringify(
+          {
+            rejections,
+          },
+          null,
+          2
+        );
+        return new Response(responseBody, { headers, status: 200 });
+      }
+    } catch (e) {
+      console.log(e);
+      return new Response("Failure", { headers, status: 400 });
+    }
+
+    return new Response("Success", { headers, status: 200 });
   },
 });
 
