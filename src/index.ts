@@ -4,11 +4,6 @@ interface PartialRejection {
   id: string;
   deleteSubmitted?: boolean;
   message?: string;
-  sheets: Sheet[];
-}
-
-interface Sheet {
-  sheetId: string;
   rejectedRecords: RecordError[];
 }
 
@@ -18,36 +13,32 @@ interface RecordError {
 }
 
 const getRejections = (body: any, validator: any) => {
-  const workbook = body.workbook;
-  const rejections: PartialRejection = {
-    id: workbook.id,
-    // message: "Success! All records are valid.",
-    // deleteSubmitted: true,
-    sheets: [],
-  };
-  workbook.sheets.forEach((sheet: any) => {
-    const rejectedRecords: RecordError[] = [];
-    sheet.records.forEach((record: any) => {
-      for (const [field, cell] of Object.entries(record.values)) {
-        const message = validator(field, cell.value);
-        if (message) {
-          rejectedRecords.push({
-            id: record.id,
-            values: [
-              {
-                field,
-                message,
-              },
-            ],
-          });
-        }
+  const sheet = body.sheet;
+  const rejectedRecords: RecordError[] = [];
+  sheet.records.forEach((record: any) => {
+    for (const [field, cell] of Object.entries(record.values)) {
+      const message = validator(field, cell.value);
+      if (message) {
+        rejectedRecords.push({
+          id: record.id,
+          values: [
+            {
+              field,
+              message,
+            },
+          ],
+        });
       }
-    });
-    rejections.sheets.push({
-      sheetId: sheet.id,
-      rejectedRecords,
-    });
+    }
   });
+
+  const rejections: PartialRejection = {
+    id: sheet.id,
+    // message: "Success! All records are valid.",
+    deleteSubmitted: true,
+    rejectedRecords,
+  };
+  console.log("rejections", rejections.rejectedRecords.length);
 
   // if (rejections.sheets.some((sheet) => sheet.rejectedRecords.length > 0)) {
   //   rejections.message = "Some records are invalid.";
