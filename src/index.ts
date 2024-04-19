@@ -1,54 +1,15 @@
+import { getRejections } from "./get.rejections";
 import { validateEmail, validateNonEmpty } from "./validators";
-
-interface PartialRejection {
-  id: string;
-  deleteSubmitted?: boolean;
-  message?: string;
-  rejectedRecords: RecordError[];
-}
-
-interface RecordError {
-  id: string;
-  values: { field: string; message: string }[];
-}
-
-const getRejections = (body: any, validator: any) => {
-  const sheet = body.sheet;
-  const rejectedRecords: RecordError[] = [];
-  sheet.records.forEach((record: any) => {
-    for (const [field, cell] of Object.entries(record.values)) {
-      const message = validator(field, cell.value);
-      if (message) {
-        rejectedRecords.push({
-          id: record.id,
-          values: [
-            {
-              field,
-              message,
-            },
-          ],
-        });
-      }
-    }
-  });
-
-  const rejections: PartialRejection = {
-    id: sheet.id,
-    // message: "Success! All records are valid.",
-    deleteSubmitted: true,
-    rejectedRecords,
-  };
-  console.log("rejections", rejections.rejectedRecords.length);
-
-  // if (rejections.sheets.some((sheet) => sheet.rejectedRecords.length > 0)) {
-  //   rejections.message = "Some records are invalid.";
-  // }
-  return rejections;
-};
 
 const server = Bun.serve({
   port: 5678,
   async fetch(req: Request) {
+    const authorization = req.headers.get("Authorization");
+    const token = authorization?.split("Bearer ")[1];
+    if (token !== "abc123") {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
     const headers = new Headers({
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",

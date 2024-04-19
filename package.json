@@ -11,5 +11,8 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@flatfile/api": "^1.7.11"
   }
 }
