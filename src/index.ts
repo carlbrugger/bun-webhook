@@ -71,6 +71,7 @@ const server = Bun.serve({
 
     try {
       const body = await req.json();
+      console.log(body);
       const url = new URL(req.url);
 
       if (url.pathname === "/reject-non-flatfile-emails") {
